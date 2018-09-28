@@ -99,7 +99,7 @@ route.get('/item',async(req,res)=>{
 })
 
 route.post('/addItem',async(req,res)=>{
-  const {name,size,color,material,weight,description,flPhoto,stok,tag,price,discount} = req.body
+  const {name,size,color,material,weight,description,flPhoto,stok,tag,price,discount,categoryId} = req.body
   const data = await product.create({
     name,
     size,
@@ -111,7 +111,8 @@ route.post('/addItem',async(req,res)=>{
     stok,
     tag,
     price,
-    discount
+    discount,
+    categoryId
   })
   res.json(data)
 })
@@ -126,7 +127,7 @@ route.delete('/removeItem/:id',async(req,res)=>{
 
 route.put('/updateItem/:id',async(req,res)=>{
   const id = req.params.id
-  const {name,size,color,material,weight,description,flPhoto,stok,tag,price,discount} = req.body
+  const {name,size,color,material,weight,description,flPhoto,stok,tag,price,discount,categoryId} = req.body
   const data = await product.update(
     {name,
       size,
@@ -138,7 +139,8 @@ route.put('/updateItem/:id',async(req,res)=>{
       stok,
       tag,
       price,
-      discount},
+      discount,
+      categoryId},
     {where : {id : id}}
   )
   res.json(data)
