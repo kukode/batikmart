@@ -1,0 +1,98 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" href="../../assets/css/preload.min.css">
+    <link rel="stylesheet" href="../../assets/css/plugins.min.css">
+    <link rel="stylesheet" href="../../assets/css/style.light-blue-500.min.css" />
+    
+</head>
+<body>
+    
+
+    <div class="container">
+        <h1 class="text-center">Dashboard BatikMart</h1>
+        <div class="row">
+            <div class="col-md-4">
+                <a href="/dashboard" class="btn btn-raised btn-primary btn-block">Dashboard</a>
+                <a href="#" class="btn btn-raised btn-danger btn-block">Product</a>
+                <a href="/dashboard/category/category.html" class="btn btn-raised btn-success btn-block">Category</a>
+                <a id="logout" class="btn btn-raised btn-default btn-block">Logout</a>
+            </div>
+            <div class="col-md-8">
+                    <label class="control-label">Name Category</label>
+                    <div id="name">
+
+                    </div>
+                    <button type="submit" class="btn btn-raised btn-primary" id="update">Update</button>
+            </div>
+        </div>
+    </div>
+
+    <!--js-->  
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+    <script src="../../assets/js/plugins.min.js"></script>
+    <script src="../../assets/js/app.min.js"></script>
+    <script src="../../assets/js/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script async>
+        
+      (async()=>{
+
+        const checkLogin = localStorage.getItem('token')
+        if(!checkLogin){
+            window.location.href = '../secret.html'
+        }
+        const a = window.location.href
+        const b = a.split('id')
+        const c = b['1'].replace('=','')
+
+        const linkc = "http://localhost:3000/api/category/"
+        const linkUpdate = 'http://localhost:3000/api/updateCategory/'
+       console.log(linkUpdate + c)
+        try {
+            const result = await axios.get(linkc+c,{
+                headers : {
+                    Authorization : localStorage.getItem('token')
+                }
+            })
+
+            const data = result.data 
+
+            $("#name").append(`<input type="text" class="form-control" id="category"  value='${data.nameCategory}'>`)
+ 
+        } catch (error) {
+            console.log(error)
+        }
+
+        const btnUpdate = document.getElementById('update')
+        btnUpdate.addEventListener('click',async()=>{
+            const dataname = document.getElementById('category').value
+            const data = await axios.put(linkUpdate + c,{
+                nameCategory : dataname   
+            },{
+                headers : {
+                    Authorization : localStorage.getItem('token')
+                }
+            })
+            console.log(data.data)
+        }) 
+          
+            
+        const logout = document.getElementById('logout')
+        logout.addEventListener('click',async()=>{
+            localStorage.removeItem('token')
+            window.location.href = '../../secret.html'
+        })
+            
+            
+         
+        })()
+        
+    </script>
+</body>
+</html>

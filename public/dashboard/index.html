@@ -1,0 +1,73 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" href="../assets/css/preload.min.css">
+    <link rel="stylesheet" href="../assets/css/plugins.min.css">
+    <link rel="stylesheet" href="../assets/css/style.light-blue-500.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    
+</head>
+<body>
+    
+
+    <div class="container">
+        <h1 class="text-center">Dashboard BatikMart</h1>
+        <div class="row">
+            <div class="col-md-4">
+                <a href="/dashboard" class="btn btn-raised btn-primary btn-block">Dashboard</a>
+                <a href="#" class="btn btn-raised btn-danger btn-block">Product</a>
+                <a href="/dashboard/category/category.html" class="btn btn-raised btn-success btn-block">Category</a>
+                <a id="logout" class="btn btn-raised btn-default btn-block">Logout</a>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="panel panel-body text-center" id="panel">
+                    
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--js-->  
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+    <script src="../assets/js/plugins.min.js"></script>
+    <script src="../assets/js/app.min.js"></script>
+    <script src="../assets/js/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script async>
+      (async()=>{
+        
+        const checkLogin = localStorage.getItem('token')
+        if(!checkLogin){
+            window.location.href = '../secret.html'
+        }
+
+
+        const linkc = "http://localhost:3000/api/category/"
+        const result = await axios.get(linkc,{
+            headers : {
+                Authorization : localStorage.getItem('token')
+            }
+        })
+        
+            $('#panel').append(`<h2 class="counter">${result.data.length}</h2>`)
+            $('#panel').append(`<i class="fa fa-2x fa-file primary-color"></i>`)
+            $('#panel').append(`<p class="mt-2 no-mb lead small-caps">category</p>`)
+        
+            
+        const logout = document.getElementById('logout')
+        logout.addEventListener('click',async()=>{
+            localStorage.removeItem('token')
+            window.location.href = '../secret.html'
+        })
+    
+        })()
+        
+    </script>
+</body>
+</html>
