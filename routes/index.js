@@ -5,6 +5,8 @@ const {category,user,product} = require('../models')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const passport = require('../config/passport')
+const multer = require('multer')
+const upload = multer({ dest: 'uploads/' })
 
 /* API LOGIN */
 
@@ -60,6 +62,13 @@ route.get('/category',passport.authenticate('jwt'), async (req,res) => {
   res.json(data)
 });
 
+route.get('/category/:id',passport.authenticate('jwt'), async(req,res) => {
+  const id = req.params.id
+  const data = await category.findOne({where: {id : id}})
+
+  res.json(data)
+})
+
 route.post('/addCategory',async(req,res)=>{
 
   const {nameCategory} = req.body
@@ -71,7 +80,7 @@ route.post('/addCategory',async(req,res)=>{
 
 })
 
-route.delete('/removeCategory/:id',async(req,res)=>{
+route.delete('/removeCategory/:id',passport.authenticate('jwt'),async(req,res)=>{
   const id = req.params.id
   await category.destroy({
     where : {id : id}
@@ -79,7 +88,7 @@ route.delete('/removeCategory/:id',async(req,res)=>{
   res.json('sukses hapus')
 })
 
-route.put('/updateCategory/:id',async(req,res)=>{
+route.put('/updateCategory/:id',passport.authenticate('jwt'),async(req,res)=>{
   const id = req.params.id
   const {nameCategory} = req.body
   const data = await category.update(
@@ -94,12 +103,15 @@ route.put('/updateCategory/:id',async(req,res)=>{
 /* API PRODUCT  */
 
 route.get('/item',async(req,res)=>{
-  const data = await product.findAll()
+  const data = await product.findAll({include: category})
   res.json(data)
 })
 
-route.post('/addItem',async(req,res)=>{
-  const {name,size,color,material,weight,description,flPhoto,stok,tag,price,discount,categoryId} = req.body
+route.post('/addItem', upload.single('flPhoto') ,async(req,res)=>{
+  const {name,size,color,material,weight,description,stok,tag,price,discount,categoryId} = req.body
+  const photo = req.file
+  console.log(photo)
+  
   const data = await product.create({
     name,
     size,
@@ -107,7 +119,7 @@ route.post('/addItem',async(req,res)=>{
     material,
     weight,
     description,
-    flPhoto,
+    flPhoto : photo.filename,
     stok,
     tag,
     price,
