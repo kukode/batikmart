@@ -1,18 +1,88 @@
 require('dotenv').config()
 const express = require('express');
 const route = express.Router();
-const {category,user,product} = require('../models')
+const {user,product,transaction} = require('../models')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const passport = require('../config/passport')
 const multer = require('multer')
-const upload = multer({ dest: 'uploads/' })
+const storage  = multer.diskStorage({
+  destination : function(req,file,cb){
+    cb(null,'uploads/')
+  },
+  filename : function(req,file,cb){
+    cb(null,file.fieldname + '-' + Date.now() + '.jpg')
+  }
+})
+const upload = multer({ storage: storage })
+const Base64 = require('js-base64').Base64;
+const request = require('request')
+/* API PAYMENT */
+
+
+route.post('/pay',(req,res)=>{
+ 
+  try {
+   
+    const { transaction_details:{order_id,gross_amount}} = req.body
+    console.log(req.body)
+     
+    const options =  {
+      method: 'POST',
+      url: 'https://app.sandbox.midtrans.com/snap/v1/transactions',
+      headers: {
+          authorization: `Basic ${Base64.encode('SB-Mid-server-esexY5jhFOA4l6lu--Vqmkt7:')}` ,
+          'content-type': 'application/json',
+          accept: 'application/json'
+      },
+      body: {
+          transaction_details: {
+              order_id : order_id,
+              gross_amount : gross_amount
+          }
+      },
+      json: true
+  };
+  
+
+    request(options, function(error, response, body) {
+      console.log(options)
+        if (error) throw new Error(error);
+        const koin = body.token
+        transaction.create({
+          order_id : options.body.transaction_details.order_id,
+          gross_amount : options.body.transaction_details.gross_amount,
+          token : koin
+        })
+        console.log(body);
+        res.json(body)
+
+    });
+
+  } catch (error) {
+    console.log(error)
+  }
+  
+   
+})
+
+
+route.get('/tokenpay',async(req,res) => {
+    const data = await transaction.findAll()
+    res.json(data)
+})
+
+
+
+
+
+
 
 /* API LOGIN */
 
 route.post('/login',async(req,res)=>{
   try {
-    const {email} = req.body
+    const {email,role} = req.body
     const data = await user.findOne({
       where : {
         email : email
@@ -20,25 +90,28 @@ route.post('/login',async(req,res)=>{
     }
   )
     if(data){
-  
-      const comparePassword = await bcrypt.compare(req.body.password,data.password)
-      if(comparePassword){
-        const koin = {
-          id: data.id,
-          email : data.email,
-          password : data.password
+      if(data.role === 1){
+        const comparePassword = await bcrypt.compare(req.body.password,data.password)
+        if(comparePassword){
+          const koin = {
+            id: data.id,
+            email : data.email,
+            password : data.password
+          }
+          // console.log(koin)
+          const token = await jwt.sign(koin,'you_jwt_secret')
+          res.json({token})
         }
-        // console.log(koin)
-        const token = await jwt.sign(koin,'you_jwt_secret')
-        res.json({token})
+        else{
+          res.json({status : 'error pas'})
+        }
+        
       }
-      else{
-        res.json({status : 'error pas'})
-      }
+      
       
     }
     else{
-      res.json({status : 'erro'})
+      res.json({status : 'error'})
     }
   
   } catch (error) {
@@ -56,62 +129,27 @@ route.post('/login',async(req,res)=>{
 /* END API */
 
 
-/* API CATEGORY */
-route.get('/category',passport.authenticate('jwt'), async (req,res) => {
-  const data = await category.findAll()
-  res.json(data)
-});
 
-route.get('/category/:id',passport.authenticate('jwt'), async(req,res) => {
-  const id = req.params.id
-  const data = await category.findOne({where: {id : id}})
-
-  res.json(data)
-})
-
-route.post('/addCategory',async(req,res)=>{
-
-  const {nameCategory} = req.body
-  const data = await category.create({
-    nameCategory
-  })
-  res.json(data)
-
-
-})
-
-route.delete('/removeCategory/:id',passport.authenticate('jwt'),async(req,res)=>{
-  const id = req.params.id
-  await category.destroy({
-    where : {id : id}
-  })
-  res.json('sukses hapus')
-})
-
-route.put('/updateCategory/:id',passport.authenticate('jwt'),async(req,res)=>{
-  const id = req.params.id
-  const {nameCategory} = req.body
-  const data = await category.update(
-      {nameCategory},
-     { where :{id :id}}
-  )
-  res.json(data)
-})
-
-/* END */
 
 /* API PRODUCT  */
 
 route.get('/item',async(req,res)=>{
-  const data = await product.findAll({include: category})
+  const data = await product.findAll()
   res.json(data)
 })
 
-route.post('/addItem', upload.single('flPhoto') ,async(req,res)=>{
-  const {name,size,color,material,weight,description,stok,tag,price,discount,categoryId} = req.body
-  const photo = req.file
+route.get('/item/:id',async(req,res)=>{
+  const id = req.params.id
+  const data = await product.findAll({where :{id : id}})
+  res.json(data)
+})
+
+
+route.post('/addItem',upload.single('flPhoto'),async(req,res)=>{
+  const {name,size,color,material,weight,description,stok,tag,price,discount,categoryName} = req.body
+  const photo = req.file.filename
   console.log(photo)
-  
+
   const data = await product.create({
     name,
     size,
@@ -119,17 +157,18 @@ route.post('/addItem', upload.single('flPhoto') ,async(req,res)=>{
     material,
     weight,
     description,
-    flPhoto : photo.filename,
+    flPhoto : photo,
     stok,
     tag,
     price,
     discount,
-    categoryId
+    categoryName
   })
   res.json(data)
 })
 
-route.delete('/removeItem/:id',async(req,res)=>{
+
+route.delete('/removeItem/:id',passport.authenticate('jwt'),async(req,res)=>{
   const id = req.params.id
   const data = await product.destroy({
     where : {id : id}
@@ -137,24 +176,37 @@ route.delete('/removeItem/:id',async(req,res)=>{
   res.json(data)
 })
 
-route.put('/updateItem/:id',async(req,res)=>{
+route.put('/updateItem/:id',upload.single('flPhoto'),async(req,res)=>{
   const id = req.params.id
-  const {name,size,color,material,weight,description,flPhoto,stok,tag,price,discount,categoryId} = req.body
-  const data = await product.update(
-    {name,
-      size,
-      color,
-      material,
-      weight,
-      description,
-      flPhoto,
-      stok,
-      tag,
-      price,
-      discount,
-      categoryId},
-    {where : {id : id}}
-  )
+  const {name,size,color,material,weight,description,stok,tag,price,discount,categoryName} = req.body
+  const photo = req.file
+  
+  const data = {name,
+    size,
+    color,
+    material,
+    weight,
+    description,
+    stok,
+    tag,
+    price,
+    discount,
+    categoryName}
+  if(photo){
+
+    data.flPhoto = req.file.filename
+    await product.update(
+      data,
+      {where : {id : id}}
+    )
+  }
+ 
+  else {
+     await product.update(
+      data,
+      {where : {id : id}}
+    )
+  }
   res.json(data)
 })
 
@@ -168,7 +220,7 @@ route.get('/users',async(req,res)=>{
 })
 
 route.post('/addUsers',async(req,res)=>{
-  const {firstName,lastName,phoneNumber,address,email,role} = req.body
+  const {firstName,lastName,phoneNumber,address,email,role,status} = req.body
   const cryptoPass = await bcrypt.hash(req.body.password,parseInt(process.env.SALT_ROUND))
   const data = await user.create({
     firstName,
@@ -177,7 +229,8 @@ route.post('/addUsers',async(req,res)=>{
     address,
     email,
     password : cryptoPass,
-    role
+    role,
+    status
   })
   res.json(data)
 })

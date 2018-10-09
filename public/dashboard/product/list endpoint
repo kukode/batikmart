@@ -1,0 +1,43 @@
+/* API CATEGORY */
+route.get('/category',passport.authenticate('jwt'), async (req,res) => {
+  const data = await category.findAll()
+  res.json(data)
+});
+
+route.get('/category/:id',passport.authenticate('jwt'), async(req,res) => {
+  const id = req.params.id
+  const data = await category.findOne({where: {id : id}})
+
+  res.json(data)
+})
+
+route.post('/addCategory',async(req,res)=>{
+
+  const {nameCategory} = req.body
+  const data = await category.create({
+    nameCategory
+  })
+  res.json(data)
+
+
+})
+
+route.delete('/removeCategory/:id',passport.authenticate('jwt'),async(req,res)=>{
+  const id = req.params.id
+  await category.destroy({
+    where : {id : id}
+  })
+  res.json('sukses hapus')
+})
+
+route.put('/updateCategory/:id',passport.authenticate('jwt'),async(req,res)=>{
+  const id = req.params.id
+  const {nameCategory} = req.body
+  const data = await category.update(
+      {nameCategory},
+     { where :{id :id}}
+  )
+  res.json(data)
+})
+
+/* END */

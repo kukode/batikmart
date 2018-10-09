@@ -1,0 +1,122 @@
+
+<html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="X-UA-Compatible" content="ie=edge">
+            <title>Document</title>
+            <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+            <link rel="stylesheet" href="../../assets/css/preload.min.css">
+            <link rel="stylesheet" href="../../assets/css/plugins.min.css">
+            <link rel="stylesheet" href="../../assets/css/style.light-blue-500.min.css" />
+            <link rel="stylesheet" href="../../assets/css/custom.css" />
+            
+        </head>
+        <body>
+                <div class="container">
+                        <h1 class="right-line mb-4">Your Cart</h1>
+                        <div class="row">
+                          <div class="col-md-9" id="cartitem">
+                            
+                            
+                            
+                            
+                          </div>
+                          <div class="col-md-3" id="paycart">
+
+                            </div>
+                        </div>
+                    </div>
+        
+            <!--js-->  
+            <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+            <script src="../../assets/js/plugins.min.js"></script>
+            <script src="../../assets/js/app.min.js"></script>
+            <script src="../../assets/js/index.js"></script>
+            <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+            <script src="https://api.midtrans.com/v2/assets/js/midtrans.min.js" type="text/javascript"></script>
+            <script type="text/javascript"src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-ERNs-hM7W58t7ryg"></script> 
+            <script async>
+        
+                (async()=>{
+                  let data = JSON.parse(localStorage.getItem('cart'));
+                  
+                   console.log(data)
+    
+                     data.map(item => $('#cartitem').append(`
+
+                      <div class="card mb-1">
+                              <table class="table table-responsive table-no-border vertical-center">
+                                <tr>
+                                  <td class="d-none d-sm-block">
+                                    
+                                  <td>
+                                    <h4 class="">${item.name}</h4>
+                                  </td>
+                                  <td>
+                                    <div class="form-inline input-number">
+                                      <input type="text" class="form-control form-control-number" value="${item.count}"></div>
+                                  </td>
+                                  <td>
+                                    <span class="color-success">${item.count * item.price}</span>
+                                  </td>
+                                  <td class="d-none d-sm-block">
+                                    <button class="btn btn-danger">
+                                      <i class="zmdi zmdi-delete"></i> Delete</button>
+                                  </td>
+                                </tr>
+                              </table>
+                            </div>
+
+                            
+
+                      `))
+
+                   let totalPrice = data.map(item=>item.price*item.count).reduce((prev,cur)=>prev + cur) 
+                   $('#paycart').append(`
+                   
+                   <div class="card card-success">
+                     <div class="card-header">
+                       <i class="fa fa-list-alt" aria-hidden="true"></i> Summary</div>
+                     <div class="card-body">
+                       <ul class="list-unstyled">
+                         <li>
+                           <strong>Price: </strong> ${totalPrice}</li>
+                         <li>
+                           <strong>Tax: </strong> $47.22</li>
+                         <li>
+                           <strong>Tax: </strong> $47.22</li>
+                         <li>
+                           <strong>Shipping costs: </strong>
+                           <span class="color-warning">$5.25</span>
+                         </li>
+                       </ul>
+                       <h3>
+                         <strong>Total:</strong>
+                         <span class="color-success">${totalPrice}</span>
+                       </h3>
+                       <button id="paybutton" class="btn btn-raised btn-success btn-block btn-raised mt-2 no-mb">
+                         <i class="zmdi zmdi-shopping-cart-plus"></i> Purchase</button>
+                     </div>
+                   </div>
+                 
+           `)
+                 
+            let payButton = document.getElementById('paybutton');
+            payButton.addEventListener('click', function () {
+              
+              
+              snap.pay('d36c7000-5ade-49b7-a742-c46f5f27c955');
+            });
+
+                    
+                  
+                     
+                })()
+            
+            </script>
+            
+        </body>
+        </html>
+

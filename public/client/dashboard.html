@@ -16,11 +16,12 @@
     
 
     <div class="container">
-        <h1 class="text-center">Dashboard BatikMart</h1>
+        <h1 class="text-center">Dashboard Member</h1>
         <div class="row">
             <div class="col-md-4">
                 <a href="/dashboard" class="btn btn-raised btn-primary btn-block">Dashboard</a>
-                <a href="/dashboard/product/product.html" class="btn btn-raised btn-danger btn-block">Product</a>
+                <a href="#" class="btn btn-raised btn-warning btn-block">Status Transaksi</a>
+                <a href="#" class="btn btn-raised btn-success btn-block">History Produk</a>
                 <!-- <a href="/dashboard/category/category.html" class="btn btn-raised btn-success btn-block">Category</a> -->
                 <a id="logout" class="btn btn-raised btn-default btn-block">Logout</a>
             </div>
@@ -44,26 +45,16 @@
         
         const checkLogin = localStorage.getItem('token')
         if(!checkLogin){
-            window.location.href = '../../secret.html'
+            window.location.href = '../../index.html'
         }
 
 
-        // const linkc = "http://localhost:3000/ap/item/"
-        // const result = await axios.get(linkc,{
-        //     headers : {
-        //         Authorization : localStorage.getItem('token')
-        //     }
-        // })
-        
-        //     $('#panel').append(`<h2 class="counter">${result.data.length}</h2>`)
-        //     $('#panel').append(`<i class="fa fa-2x fa-file primary-color"></i>`)
-        //     $('#panel').append(`<p class="mt-2 no-mb lead small-caps">category</p>`)
         
             
         const logout = document.getElementById('logout')
         logout.addEventListener('click',async()=>{
             localStorage.removeItem('token')
-            window.location.href = '/secret.html'
+            window.location.href = '/index.html'
         })
     
         })()

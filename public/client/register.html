@@ -1,0 +1,156 @@
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+        <link rel="stylesheet" href="../../assets/css/preload.min.css">
+        <link rel="stylesheet" href="../../assets/css/plugins.min.css">
+        <link rel="stylesheet" href="../../assets/css/style.light-blue-500.min.css" />
+        <link rel="stylesheet" type="text/css" href="../../assets/css/snackbar.min.css" />
+        <link rel="stylesheet" href="../../assets/css/custom.css" />
+        
+    </head>
+    <body>
+        
+    
+        <div class="container" >
+            <div class="ms-hero-page-override ms-hero-img-airplane ms-bg-fixed ms-hero-bg-dark-light">
+                <div class="container">
+                  <div class="text-center">
+                    <h1 class="no-m ms-site-title color-white center-block ms-site-title-lg mt-2 animated zoomInDown animation-delay-5">Register</h1>
+                    <p class="lead lead-lg color-light text-center center-block mt-2 mw-800 text-uppercase fw-300 animated fadeInUp animation-delay-7">Do not wait more register now! Access our great Ecommerce and benefit from
+                      <span class="color-info">exclusive membership</span> conditions.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="container">
+                <div class="card card-primary card-hero animated fadeInUp animation-delay-7">
+                  <div class="card-body">
+                   
+                      <fieldset>
+                        <div class="row form-group">
+                          <label for="inputUser" class="col-md-2 control-label">First Name</label>
+                          <div class="col-md-9">
+                            <input type="text" class="form-control" id="firstName" placeholder="First Name"> </div>
+                        </div>
+                        <div class="row form-group">
+                          <label for="inputEmail" class="col-md-2 control-label">Last Name</label>
+                          <div class="col-md-9">
+                            <input type="text" class="form-control" id="lastName" placeholder="Last Name"> </div>
+                        </div>
+                        <div class="row form-group">
+                          <label for="inputPassword" class="col-md-2 control-label">Phone Number</label>
+                          <div class="col-md-9">
+                            <input type="text" class="form-control" id="phone" placeholder="phone number"> </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <label for="inputPassword" class="col-md-2 control-label">Address</label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" id="adres" placeholder="adress"> </div>
+                        </div>
+                        
+                        <div class="row form-group">
+                          <label for="inputName" class="col-md-2 control-label">Email</label>
+                          <div class="col-md-9">
+                            <input type="email" class="form-control" id="mails" placeholder="Email"> </div>
+                        </div>
+                        <div class="row form-group">
+                          <label for="inputLast" class="col-md-2 control-label">Password</label>
+                          <div class="col-md-9">
+                            <input type="password" class="form-control" id="password" placeholder="Password"> </div>
+                        </div>
+                        
+                        <div class="row mt-2">
+                        <div class="offset-lg-2 col-lg-6">
+                                <button class="btn btn-raised btn-primary btn-block" id="reg">Register Now</button>
+                        </div>
+                          <div class="col-lg-3">
+                           
+                            <a href="../index.html" class="btn btn-raised btn-danger btn-block">Back To Home</a>
+                          </div>
+                        </div>
+                      </fieldset>
+              
+                  </div>
+                </div>
+              </div> 
+                
+            <div class="row">
+                <div id="res">
+
+                </div>
+            </div>
+        </div>
+    
+        <!--js-->  
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+        <script src="../../assets/js/plugins.min.js"></script>
+        <script src="../../assets/js/app.min.js"></script>
+        <script src="../../assets/js/index.js"></script>
+        <script src="../../assets/js/snackbar.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        
+        <script async>
+            (async()=>{
+
+                const register = document.getElementById('reg')
+                register.addEventListener('click',async()=>{
+                    // alert('hola')
+                    try {
+                        const fname = document.getElementById('firstName').value
+                        const lname = document.getElementById('lastName').value
+                        const pnumber = document.getElementById('phone').value
+                        const adress = document.getElementById('adres').value
+                        const mail = document.getElementById('mails').value
+                        const pass = document.getElementById('password').value
+
+
+                        const link = 'http://localhost:3000/client/registerUser'
+                        const data = await axios.post(link,{
+                            firstName : fname,
+                            lastName : lname,
+                            phoneNumber : pnumber,
+                            address : adress,
+                            email : mail,
+                            password : pass
+                            
+                        })
+                        console.log(data)
+                       if(data){
+                         Snackbar.show(
+                            {text: 'Terima Kasih Pendaftaran Anda Berhasil',
+                            pos :"bottom-center",
+                            onClose: function(element){
+                                alert('Mulai Belanja')
+                                window.location.href = '../index.html'
+                            }
+                        }
+                    ); 
+                          
+                       }
+                    } catch (error) {
+                        console.log(error)
+                    }
+                })
+
+                
+
+
+
+
+
+
+            })()
+        
+        </script>
+        
+    </body>
+    </html>
+
+
+

@@ -1,0 +1,154 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" href="../../assets/css/preload.min.css">
+    <link rel="stylesheet" href="../../assets/css/plugins.min.css">
+    <link rel="stylesheet" href="../../assets/css/style.light-blue-500.min.css" />
+    <link rel="stylesheet" href="../../assets/css/custom.css" />
+    
+</head>
+<body>
+    
+
+    <div class="container" >
+            <a href="cart.html" class="btn btn-raised btn-danger" target="blank"><i class="zmdi zmdi-shopping-cart-plus"></i> Cart</a>
+            <a href="client/register.html" class="btn btn-raised btn-info" target="blank"><i class="fas fa-users"></i> Register</a>
+            <a href="client/login.html" class="btn btn-raised btn-warning" target="blank"><i class="fas fa-sign-in-alt"></i> Login</a>
+            
+            <div class="row" >
+                    <div class="col-lg-12">
+                            <div class="row" id="data">
+                              
+                            </div>
+                            
+                    </div>
+                    
+            </div>
+           
+            
+        
+    </div>
+
+    <!--js-->  
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+    <script src="../../assets/js/plugins.min.js"></script>
+    <script src="../../assets/js/app.min.js"></script>
+    <script src="../../assets/js/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    
+    <script async>
+
+        (async()=>{
+
+            const data = []                  
+            let cart = []
+            const list = 'http://localhost:3000/api/item/'
+            const listProduk = await axios.get(list)
+            const result = listProduk.data
+           
+            
+
+              
+           
+
+            function Item(data){
+                this.id = data.id
+                this.name = data.name
+                this.price = data.price
+                this.count = data.count
+            }
+
+            
+            function saveCart(){
+                localStorage.setItem('cart',JSON.stringify(cart))
+            }
+
+            function loadCart(){
+                cart = JSON.parse(localStorage.getItem('cart'))
+                if(cart === null){
+                    cart = []
+                }
+            }
+
+            loadCart()
+
+            function addItemToCart(data){
+                for(let i in cart){
+                    if(cart[i].id === data.id){
+                        cart[i].count += data.count
+                        saveCart()
+                        return
+                    }
+                }
+                console.log('addItemToCart:',data)
+                let item = new Item(data)
+                cart.push(item)
+                saveCart()
+            }
+            
+
+
+                   
+                   result.map(x => {
+                $('#data').append(
+                    `<div class="col-xl-4 col-md-6 mix laptop apple" data-price="1999.99" data-date="20160901">
+                                <div class="card ms-feature">
+                                  <div class="card-body overflow-hidden text-center">
+                                    <a href="ecommerce-item.html">
+                                      <img src="/${x.flPhoto}" alt="" class="img-fluid center-block">
+                                    </a>
+                                    <h4 class="text-normal text-center">${x.name}</h4>
+                                    <p>Quibusdam aperiam tempora ut blanditiis cumque ab pariatur.</p>
+                                    <p>${x.price}</p>
+                                   
+                                    <button id="addCart-${x.id}"
+                                    data-name="${x.name}"
+                                    data-price="${x.price}"
+                                    data-id="${x.id}"
+                                    href="javascript:void(0)" class="btn btn-primary btn-sm btn-block btn-raised mt-2 no-mb">
+                                      <i class="zmdi zmdi-shopping-cart-plus"></i> Add to Cart</button>
+                                  </div>
+                                </div>
+                              </div>`
+                    )
+
+                    const addCart = document.getElementById(`addCart-${x.id}`)
+            
+            addCart.addEventListener('click',(e)=>{
+                // alert('halo')
+                let id = $(e.currentTarget).attr('data-id')
+                let productName = $(e.currentTarget).attr('data-name')
+                let price = $(e.currentTarget).attr('data-price')
+                
+                const data =  { 
+                    id,
+                    name : productName,
+                    price,
+                    count : 1
+                }
+
+                addItemToCart(data)
+                // console.log(addItemToCart(data))
+                
+            }) 
+                })
+
+            
+            
+        
+        
+        
+        
+            
+             
+        })()
+    
+    </script>
+    
+</body>
+</html>

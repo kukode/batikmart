@@ -41,8 +41,9 @@ module.exports = {
       discount: {
         type: Sequelize.STRING
       },
-      categoryId: {
-        type: Sequelize.INTEGER
+      categoryName: {
+        type: Sequelize.STRING
+
       },
       createdAt: {
         allowNull: false,

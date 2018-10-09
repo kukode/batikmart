@@ -1,0 +1,248 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" href="../../assets/css/preload.min.css">
+    <link rel="stylesheet" href="../../assets/css/plugins.min.css">
+    <link rel="stylesheet" href="../../assets/css/style.light-blue-500.min.css" />
+    
+</head>
+<body>
+    
+
+    <div class="container">
+        <h1 class="text-center">Dashboard BatikMart</h1>
+        <div class="row">
+            <div class="col-md-4">
+                <a href="/dashboard" class="btn btn-raised btn-primary btn-block">Dashboard</a>
+                <a href="/dashboard/product/product.html" class="btn btn-raised btn-danger btn-block">Product</a>
+                <!-- <a href="/dashboard/category/category.html" class="btn btn-raised btn-success btn-block">Category</a> -->
+                <a id="logout" class="btn btn-raised btn-default btn-block">Logout</a>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group row">
+                    <label for="inputEmail" autocomplete="false" class="col-lg-2 control-label">Nama Batik</label>
+        
+                    <div class="col-lg-10" id="namebatik">
+                        
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputPassword"  class="col-lg-2 control-label">Ukuran</label>
+        
+                    <div class="col-lg-10" id="ukuran">
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="form-group row">
+                        <label for="inputPassword"  class="col-lg-2 control-label">Warna</label>
+            
+                        <div class="col-lg-10" id="colors">
+                            
+                        </div>
+                </div>
+                <div class="form-group row">
+                        <label for="inputPassword" autocomplete="new-password" class="col-lg-2 control-label">Material</label>
+            
+                        <div class="col-lg-10" id="material">
+                            
+                        </div>
+                </div>
+                <div class="form-group row">
+                        <label for="inputPassword" autocomplete="new-password" class="col-lg-2 control-label">Berat</label>
+            
+                        <div class="col-lg-10" id="berat">
+                            
+                        </div>
+                </div>
+                <div class="form-group row justify-content-end">
+                        <label for="textArea" class="col-lg-2 control-label">Deskripsi Batik</label>
+            
+                        <div class="col-lg-10" id="deskripsi">
+                            
+                            
+                        </div>
+                </div>
+                <div class="form-group">
+                        
+                    <input type="file" id="inputFile" name="flPhoto">
+                    <div class="input-group">
+                        <input type="text" readonly="" class="form-control" placeholder="Placeholder w/file chooser...">
+                        <span class="input-group-btn input-group-sm">
+                        <button type="button" class="btn btn-fab btn-fab-mini">
+                          <i class="material-icons">attach_file</i>
+                        </button>
+                      </span>
+                    </div>
+                    </div>
+                <div class="form-group row">
+                        <label for="inputPassword" autocomplete="new-password" class="col-lg-2 control-label">Stok</label>
+            
+                        <div class="col-lg-10" id="stok">
+                            
+                        </div>
+                </div>
+                <div class="form-group row">
+                        <label for="inputPassword" autocomplete="new-password" class="col-lg-2 control-label">Tag</label>
+            
+                        <div class="col-lg-10" id="tag">
+                            
+                        </div>
+                </div>
+                <div class="form-group row">
+                        <label for="inputPassword" autocomplete="new-password" class="col-lg-2 control-label">Price</label>
+            
+                        <div class="col-lg-10" id="price">
+                            
+                        </div>
+                </div>
+                <div class="form-group row">
+                        <label for="inputPassword" autocomplete="new-password" class="col-lg-2 control-label">Discount</label>
+            
+                        <div class="col-lg-10" id="diskon">
+
+                        </div>
+                </div>
+                <div class="form-group row">
+                        <label for="inputPassword" autocomplete="new-password" class="col-lg-2 control-label">Kategori</label>
+            
+                        <div class="col-lg-10" id="catname">
+                            
+                        </div>
+                </div>
+                
+                <div class="form-group row justify-content-end">
+                    <div class="col-lg-10">
+                        <button type="submit" class="btn btn-raised btn-primary" id="update">Update</button>
+                    </div>
+                </div>
+                    
+            </div>
+        </div>
+    </div>
+
+    <!--js-->  
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+    <script src="../../assets/js/plugins.min.js"></script>
+    <script src="../../assets/js/app.min.js"></script>
+    <script src="../../assets/js/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script async>
+        
+      (async()=>{
+
+        const checkLogin = localStorage.getItem('token')
+        if(!checkLogin){
+            window.location.href = '../secret.html'
+        }
+        const a = window.location.href
+        const b = a.split('id')
+        const c = b['1'].replace('=','')
+
+        const linkc = "http://localhost:3000/api/item/"
+        const linkUpdate = 'http://localhost:3000/api/updateItem/'
+       
+        try {
+            const result = await axios.get(linkc+c,{
+                headers : {
+                    Authorization : localStorage.getItem('token')
+                }
+            })
+
+            const data = result.data 
+            
+            data.map(x => {
+                $("#namebatik").append(`<input type="text" class="form-control" name="name" id="inputNama" value="${x.name}">`)
+                $("#ukuran").append(`<input type="text" class="form-control" name="size" id="inputSize" value="${x.size}">`)
+                $("#colors").append(`<input type="text" class="form-control" name="color" id="inputWarna" value="${x.color}">`)
+                $("#material").append(`<input type="text" class="form-control" name="material" id="inputMaterial" value="${x.material}">`)
+                $("#berat").append(`<input type="text" class="form-control" name="weight" id="inputWeight" value="${x.weight}">`)
+                $("#deskripsi").append(`<textarea class="form-control" rows="3" name="description" id="desk">${x.description}</textarea>`)
+                $("#stok").append(`<input type="text" class="form-control" name="stok" id="inputStok" value="${x.stok}">`)
+                $("#tag").append(`<input type="text" class="form-control" name="tag" id="inputTag" value="${x.tag}">`)
+                $("#price").append(`<input type="text" class="form-control" name="price" id="inputPrice" value="${x.price}">`)
+                $("#diskon").append(`<input type="text" class="form-control" name="price" id="inputDiscount" value="${x.discount}">`)
+                $("#catname").append(`<input type="text" class="form-control" name="categoryName" id="inputKategori" value="${x.categoryName}">`)
+            })
+            console.log(data)
+            
+            
+           
+
+        } catch (error) {
+            console.log(error)
+        }
+
+        const btnUpdate = document.getElementById('update')
+        btnUpdate.addEventListener('click',async()=>{
+            
+            
+            const bname = document.getElementById('inputNama').value
+            const bsize = document.getElementById('inputSize').value
+            const bcolor = document.getElementById('inputWarna').value
+            const bmaterial = document.getElementById('inputMaterial').value
+            const bweight = document.getElementById('inputWeight').value
+            const bdesc = document.getElementById('desk').value
+            const bfile = document.getElementById('inputFile').files[0]
+            const bstok = document.getElementById('inputStok').value
+            const btag = document.getElementById('inputTag').value
+            const bprice = document.getElementById('inputPrice').value
+            const bdiscount = document.getElementById('inputDiscount').value
+            const bkategori = document.getElementById('inputKategori').value
+
+
+            const formData = new FormData()
+            formData.set('name',bname)
+            formData.set('size',bsize)
+            formData.set('color',bcolor)
+            formData.set('material',bmaterial)
+            formData.set('weight',bweight)
+            formData.set('description',bdesc)
+            formData.set('flPhoto',bfile)
+            formData.set('stok',bstok)
+            formData.set('tag',btag)
+            formData.set('price',bprice)
+            formData.set('discount',bdiscount)
+            formData.set('categoryName',bkategori)
+
+            
+                const data = await axios({
+                method: 'put',
+                url: linkUpdate + c,
+                data: formData,
+                config: { 
+                    headers: {
+                            
+                            'Content-Type': 'multipart/form-data' 
+                        }
+                    }
+                })
+            
+           
+            
+            alert('sukses edit')
+            window.location.href = 'product.html'
+            console.log(data.data)
+
+        }) 
+          
+            
+        const logout = document.getElementById('logout')
+        logout.addEventListener('click',async()=>{
+            localStorage.removeItem('token')
+            window.location.href = '../../secret.html'
+        })
+            
+            
+         
+        })()
+        
+    </script>
+</body>
+</html>

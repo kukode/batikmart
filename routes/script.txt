@@ -1,0 +1,31 @@
+const obj = {"transaction_details": {"order_id":"order-12","gross_amount": 5000}}
+    
+    const data = await axios.post('https://app.sandbox.midtrans.com/snap/v1/transactions',obj,
+      { 
+        headers : {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Basic ${Base64.encode('SB-Mid-server-esexY5jhFOA4l6lu--Vqmkt7:')}`  
+        }
+      })
+
+
+      const koin = data.data.token
+      transaction.create({
+        order_id : obj.transaction_details.order_id,
+        gross_amount : obj.transaction_details.gross_amount,
+        token : koin
+      })
+      console.log(data.data.token)
+      
+      res.json(data)
+    
+    }catch(error){
+      console.log(error)
+    }
+
+
+
+
+
+

@@ -12,11 +12,11 @@ module.exports = (sequelize, DataTypes) => {
     tag: DataTypes.STRING,
     price: DataTypes.STRING,
     discount: DataTypes.STRING,
-    categoryId: DataTypes.INTEGER
+    categoryName: DataTypes.STRING
   }, {});
   product.associate = function(models) {
     // associations can be defined here
-    product.belongsTo(models.category)
+    
   };
   return product;
 };
