@@ -4,7 +4,8 @@ module.exports = (sequelize, DataTypes) => {
     order_id: DataTypes.STRING,
     gross_amount: DataTypes.STRING,
     token: DataTypes.STRING,
-    userId: DataTypes.INTEGER
+    userId: DataTypes.INTEGER,
+    transaction_status: DataTypes.STRING
   }, {underscored: true});
   transaction.associate = function(models) {
     // associations can be defined here

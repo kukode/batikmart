@@ -1,7 +1,7 @@
 require('dotenv').config()
 const express = require('express');
 const route = express.Router();
-const {user,product,transaction} = require('../models')
+const {user,product,transaction,transactionDetails} = require('../models')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const passport = require('../config/passport')
@@ -17,16 +17,51 @@ const storage  = multer.diskStorage({
 const upload = multer({ storage: storage })
 const Base64 = require('js-base64').Base64;
 const request = require('request')
+
+
 /* API PAYMENT */
 
 
-route.post('/pay',(req,res)=>{
+route.post('/pay', async (req,res)=>{
  
   try {
    
     const { transaction_details:{order_id,gross_amount}} = req.body
-    console.log(req.body)
-     
+    const { item_details,status}= req.body
+    console.log(status)
+
+ const trans = await transaction.create({
+    order_id : order_id,
+    gross_amount : gross_amount,
+    transaction_status : status
+  })
+
+  item_details.map(x=>{
+    transactionDetails.create({
+      price: x.price,
+      quantity:x.quantity,
+      name: x.name
+    })
+   
+        
+        
+
+    });
+
+    res.json(trans)
+
+  } catch (error) {
+    console.log(error)
+  }
+  
+   
+})
+
+
+route.post('/getToken',async(req,res) => {
+  try {
+    const { transaction_details:{order_id,gross_amount}} = req.body
+    const { item_details}= req.body
     const options =  {
       method: 'POST',
       url: 'https://app.sandbox.midtrans.com/snap/v1/transactions',
@@ -39,37 +74,26 @@ route.post('/pay',(req,res)=>{
           transaction_details: {
               order_id : order_id,
               gross_amount : gross_amount
-          }
+          },  
+          item_details
       },
       json: true
-  };
-  
+    };
 
     request(options, function(error, response, body) {
-      console.log(options)
-        if (error) throw new Error(error);
-        const koin = body.token
-        transaction.create({
-          order_id : options.body.transaction_details.order_id,
-          gross_amount : options.body.transaction_details.gross_amount,
-          token : koin
-        })
-        console.log(body);
-        res.json(body)
-
-    });
-
+        if(error){
+          res.json(error)
+        }
+        
+        res.json(response)
+    })
   } catch (error) {
     console.log(error)
   }
+
+route.p
   
-   
-})
 
-
-route.get('/tokenpay',async(req,res) => {
-    const data = await transaction.findAll()
-    res.json(data)
 })
 
 
@@ -90,7 +114,7 @@ route.post('/login',async(req,res)=>{
     }
   )
     if(data){
-      if(data.role === 1){
+     
         const comparePassword = await bcrypt.compare(req.body.password,data.password)
         if(comparePassword){
           const koin = {
@@ -106,7 +130,7 @@ route.post('/login',async(req,res)=>{
           res.json({status : 'error pas'})
         }
         
-      }
+      
       
       
     }

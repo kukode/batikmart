@@ -72,8 +72,13 @@
                             
 
                       `))
-
+                 
+                 
                    let totalPrice = data.map(item=>item.price*item.count).reduce((prev,cur)=>prev + cur) 
+                   let date = new Date()
+                   let invnumber = `${date.getFullYear()}/${date.getDate()}/${date.getDay()}/${date.getHours()}/${date.getMinutes()}/${date.getMilliseconds()}`
+                  
+
                    $('#paycart').append(`
                    
                    <div class="card card-success">
@@ -81,20 +86,18 @@
                        <i class="fa fa-list-alt" aria-hidden="true"></i> Summary</div>
                      <div class="card-body">
                        <ul class="list-unstyled">
+                        <li>
+                           <strong>Invoice Number  : </strong> <div id="inv">${invnumber}</div>
+                        </li>
                          <li>
-                           <strong>Price: </strong> ${totalPrice}</li>
-                         <li>
-                           <strong>Tax: </strong> $47.22</li>
-                         <li>
-                           <strong>Tax: </strong> $47.22</li>
-                         <li>
-                           <strong>Shipping costs: </strong>
-                           <span class="color-warning">$5.25</span>
-                         </li>
+                           <strong>Price: </strong> <div id="price">${totalPrice}</div>
+                        </li>
+                      
+                         
                        </ul>
                        <h3>
                          <strong>Total:</strong>
-                         <span class="color-success">${totalPrice}</span>
+                         <span class="color-success" id="totalprice">${totalPrice}</span>
                        </h3>
                        <button id="paybutton" class="btn btn-raised btn-success btn-block btn-raised mt-2 no-mb">
                          <i class="zmdi zmdi-shopping-cart-plus"></i> Purchase</button>
@@ -102,12 +105,81 @@
                    </div>
                  
            `)
-                 
+
+          
+
+             
+                
+                
             let payButton = document.getElementById('paybutton');
-            payButton.addEventListener('click', function () {
+            payButton.addEventListener('click', async() => {
+              try {
+                let totPrice = document.getElementById('price').innerHTML
+                let ordid = document.getElementById('inv').innerHTML
+                        
+                    const url = 'http://localhost:3000/api/getToken'
+                    const item_details = data.map(item=>{return {
+                            price: item.price ,
+                            quantity: item.count,
+                            name:item.name
+                          }})
+                    const getToken = await axios.post(url,{
+                              "transaction_details": 
+                              {
+                                "order_id":ordid,
+                                "gross_amount": totPrice
+                              },
+                              item_details
+                    })
+                    console.log(getToken.data.body.token)
+                    snap.show()
+                    if(!getToken.data.body.token){
+                      snap.hide()
+                    }
+                    else {
+                        snap.pay(getToken.data.body.token,{
+                        
+                        onPending: async function(result)
+                        {
+                         
+                          console.log('pending');
+                          const link = 'http://localhost:3000/api/pay'
+                          let totPrice = document.getElementById('price').innerHTML
+                          let ordid = document.getElementById('inv').innerHTML
+                        let status = result.transaction_status
+                  
+                          const item_details = data.map(item=>{return {
+                            price: item.price ,
+                            quantity: item.count,
+                            name:item.name
+                          }})
+                          //  console.log(item_details)
+
+
+                            const payment = await axios.post(link,{
+                                  "transaction_details": 
+                                  {
+                                    "order_id":ordid,
+                                    "gross_amount": totPrice
+                                  },
+                                  item_details,
+                                  status
+                                  
+                              })
+                              localStorage.removeItem('cart')
+                              window.location.href = 'index.html'
+                        }
+                       
+                        
+                      });
+                      
+                    }
+
+              } catch (error) {
+                console.log(error)
+              }
               
-              
-              snap.pay('d36c7000-5ade-49b7-a742-c46f5f27c955');
+             
             });
 
                     
