@@ -17,7 +17,7 @@ const storage  = multer.diskStorage({
 const upload = multer({ storage: storage })
 const Base64 = require('js-base64').Base64;
 const request = require('request')
-
+const axios = require('axios')
 
 /* API PAYMENT */
 
@@ -50,6 +50,7 @@ route.post('/pay', async (req,res)=>{
 
     res.json(trans)
 
+    
   } catch (error) {
     console.log(error)
   }
@@ -96,7 +97,45 @@ route.p
 
 })
 
+route.get('/getProvince',async(req,res)=>{
+     /**
+     * raja ongkir province
+     */
+    try {
+      let provinsi = '	https://api.rajaongkir.com/starter/province'
+                   let dataProv = await axios.get(provinsi,{
+                     headers : {
+                       key : '7eb26c54aaa3f27370d9ff728a1c8eec',
+                       "Content-Type": "application/x-www-form-urlencoded"
+                     }
+                   })
+                   let hasilongkir = dataProv.data.rajaongkir
+                   res.json(hasilongkir)
+    } catch (error) {
+      console.log(error)
+    }
+     
+})
 
+route.get('/getCity',async(req,res)=>{
+    /**
+     * raja ongkir province
+     */
+    try {
+      let city = '	https://api.rajaongkir.com/starter/city'
+                   let dataCity = await axios.get(city,{
+                     headers : {
+                       key : '7eb26c54aaa3f27370d9ff728a1c8eec',
+                       "Content-Type": "application/x-www-form-urlencoded"
+                     }
+                   })
+                   let hasilongkir = dataCity.data.rajaongkir
+                   res.json(hasilongkir)
+    } catch (error) {
+      console.log(error)
+    }
+     
+})
 
 
 
