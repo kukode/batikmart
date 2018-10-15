@@ -27,8 +27,8 @@ route.post('/pay', async (req,res)=>{
   try {
    
     const { transaction_details:{order_id,gross_amount}} = req.body
-    const { item_details,status}= req.body
-    console.log(status)
+    const { item_details,status,province}= req.body
+    console.log(province)
 
  const trans = await transaction.create({
     order_id : order_id,
@@ -42,15 +42,11 @@ route.post('/pay', async (req,res)=>{
       quantity:x.quantity,
       name: x.name
     })
-   
-        
-        
 
     });
 
     res.json(trans)
 
-    
   } catch (error) {
     console.log(error)
   }
@@ -63,6 +59,7 @@ route.post('/getToken',async(req,res) => {
   try {
     const { transaction_details:{order_id,gross_amount}} = req.body
     const { item_details}= req.body
+
     const options =  {
       method: 'POST',
       url: 'https://app.sandbox.midtrans.com/snap/v1/transactions',
@@ -90,10 +87,7 @@ route.post('/getToken',async(req,res) => {
     })
   } catch (error) {
     console.log(error)
-  }
-
-route.p
-  
+  }  
 
 })
 
@@ -103,14 +97,14 @@ route.get('/getProvince',async(req,res)=>{
      */
     try {
       let provinsi = '	https://api.rajaongkir.com/starter/province'
-                   let dataProv = await axios.get(provinsi,{
-                     headers : {
-                       key : '7eb26c54aaa3f27370d9ff728a1c8eec',
-                       "Content-Type": "application/x-www-form-urlencoded"
-                     }
-                   })
-                   let hasilongkir = dataProv.data.rajaongkir
-                   res.json(hasilongkir)
+      let dataProv = await axios.get(provinsi,{
+        headers : {
+          key : '7eb26c54aaa3f27370d9ff728a1c8eec',
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
+      })
+      let hasilongkir = dataProv.data.rajaongkir
+      res.json(hasilongkir)
     } catch (error) {
       console.log(error)
     }
@@ -119,27 +113,103 @@ route.get('/getProvince',async(req,res)=>{
 
 route.get('/getCity',async(req,res)=>{
     /**
-     * raja ongkir province
+     * raja ongkir city
      */
     try {
-      let city = '	https://api.rajaongkir.com/starter/city'
-                   let dataCity = await axios.get(city,{
-                     headers : {
-                       key : '7eb26c54aaa3f27370d9ff728a1c8eec',
-                       "Content-Type": "application/x-www-form-urlencoded"
-                     }
-                   })
-                   let hasilongkir = dataCity.data.rajaongkir
-                   res.json(hasilongkir)
+      const id = req.query.province
+      // console.log(req.query)
+      let city =`https://api.rajaongkir.com/starter/city?province=${id}`
+        let dataCity = await axios.get(city,{
+          headers : {
+            key : '7eb26c54aaa3f27370d9ff728a1c8eec',
+            "Content-Type": "application/x-www-form-urlencoded"
+          }
+        })
+        let hasilongkir = dataCity.data.rajaongkir
+        res.json(hasilongkir)
     } catch (error) {
       console.log(error)
     }
      
 })
 
+route.post('/cost',async(req,res)=>{
+  /**
+     * raja ongkir cost
+     */
+    try {
+      let tujuan = req.body.destination
+      console.log(req.body)
+      let cost = 'https://api.rajaongkir.com/starter/cost'
+            await axios.post(cost, {
+              "origin":79,
+             "destination":tujuan,
+             "weight":1700,
+             "courier":"jne"
+      
+            },{
+              headers : {
+                key : '7eb26c54aaa3f27370d9ff728a1c8eec'
+              }
+            } )
+            .then(function (response) {
+              res.json(response.data.rajaongkir.results);
+              // console.log(response.data.rajaongkir.results)
+            })
+            .catch(function (error) {
+              res.json(error);
+            });
+           
+                  
+    } catch (error) {
+      console.log(error)
+    }
+})
 
 
 
+/**
+ * 
+ * list api kurir internasional
+ */
+route.get('/listcourierindo',async(req,res)=>{
+  try {
+    let link = 'https://api.aftership.com/v4/couriers'
+    await axios.get(link,{
+      headers:{
+        "aftership-api-key" : "5c7e1d79-2146-4020-8784-2cefb9042c49",
+        "Content-Type": "application/json"
+      }
+    })
+    .then((response)=>{
+        res.json(response.data)
+    })
+    
+  } catch (error) {
+    res.json(error)
+  }
+ 
+  
+})
+
+/**
+ * end list kurir
+ */
+
+
+ /**
+  * endpoint transaction
+  * 
+  */
+
+  route.get('/transaction',async(req,res)=>{
+    try {
+      const data = await transaction.findAll()
+      res.json(data)
+    } catch (error) {
+      res.json(error)
+    }
+  })
 
 /* API LOGIN */
 
@@ -168,10 +238,7 @@ route.post('/login',async(req,res)=>{
         else{
           res.json({status : 'error pas'})
         }
-        
-      
-      
-      
+
     }
     else{
       res.json({status : 'error'})

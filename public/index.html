@@ -119,23 +119,23 @@
 
                     const addCart = document.getElementById(`addCart-${x.id}`)
             
-            addCart.addEventListener('click',(e)=>{
-                // alert('halo')
-                let id = $(e.currentTarget).attr('data-id')
-                let productName = $(e.currentTarget).attr('data-name')
-                let price = $(e.currentTarget).attr('data-price')
-                
-                const data =  { 
-                    id,
-                    name : productName,
-                    price,
-                    count : 1
-                }
+                        addCart.addEventListener('click',(e)=>{
+                            // alert('halo')
+                            let id = $(e.currentTarget).attr('data-id')
+                            let productName = $(e.currentTarget).attr('data-name')
+                            let price = $(e.currentTarget).attr('data-price')
+                            
+                            const data =  { 
+                                id,
+                                name : productName,
+                                price,
+                                count : 1
+                            }
 
-                addItemToCart(data)
-                // console.log(addItemToCart(data))
-                
-            }) 
+                            addItemToCart(data)
+                            // console.log(addItemToCart(data))
+                            
+                        }) 
                 })
 
             

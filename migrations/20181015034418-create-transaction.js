@@ -9,22 +9,25 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       order_id: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
       },
       gross_amount: {
         type: Sequelize.STRING
       },
-     transaction_status:{
-      type: Sequelize.STRING
-     },
+      transaction_status: {
+        type: Sequelize.STRING
+      },
+      province: {
+        type: Sequelize.STRING
+      },
       userId: {
         type: Sequelize.INTEGER
       },
-      created_at: {
+      createdAt: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updated_at: {
+      updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
       }

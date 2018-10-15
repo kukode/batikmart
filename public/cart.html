@@ -49,9 +49,21 @@
                                         <label class="control-label"><b>Pilih Kota</b></label>
                                         <select id="listCity">
                                             <option>Pilih</option>
-                                          </select>
-                                        <button id="paybutton" class="btn btn-raised btn-info btn-block btn-raised mt-2 no-mb">
-                                            <i class="fas fa-shipping-fast"></i> Cek Ongkir</button>
+                                        </select>
+
+                                        <!-- <label class="control-label"><b>Pilih Kurir</b></label>
+                                        <select id="listCourier">
+                                         
+                                        </select> -->
+                                        <label class="control-label"><b>Pilih Harga</b></label>
+                                        <select id="listHarga">
+                                         
+                                        </select>
+                                        <div id="btnOngkir"> 
+
+                                        </div>
+                                        <!-- <button id="kurir" class="btn btn-raised btn-info btn-block btn-raised mt-2 no-mb">
+                                            <i class="fas fa-shipping-fast"></i> Cek Ongkir</button> -->
                                     </div>
                                   </div>
                           
@@ -79,6 +91,8 @@
         
                 (async()=>{
                   let data = JSON.parse(localStorage.getItem('cart'));
+                  let listongkir = JSON.parse(localStorage.getItem('ongkir'))
+                  console.log(listongkir.province)
                   
                    console.log(data)
     
@@ -148,43 +162,116 @@
                  
            `)
 
-             let provinsi = 'http://localhost:3000/api/getProvince'
-                let dataProv = await axios.get(provinsi)
-                let hasilongkir = dataProv.data.results
-                console.log(hasilongkir)
-                hasilongkir.map(x=>{
-                  $('#listProv').append(`
-                       
-                    <option>${x.province}</option>
-                    `)
+              let provinsi = 'http://localhost:3000/api/getProvince'
+              let dataProv = await axios.get(provinsi)
+              let resProv = dataProv.data.results
+              // console.log(resProv)
+              resProv.map(x=>{
+                $('#listProv').append(`
+                      
+                  <option value="${x.province_id}">${x.province}</option>
+                  `)
               })
 
-               let city = 'http://localhost:3000/api/getCity'
-                let dataCity = await axios.get(city)
-                let hasilongkirCity = dataCity.data.results
-                console.log(hasilongkirCity)
-                hasilongkirCity.map(z=>{
-                 
-                    $('#listCity').append(`<option>${z.city_name}</option>`)
-                 
-                 
-              })
+              $('#listProv').change((e)=>{
+                $( "#listProv option:selected" ).each(async function() {
+                  const idProvince = ($(this).val())
+                  // console.log(idProvince)
 
-           
- 
+                    let city = `http://localhost:3000/api/getCity?province=${idProvince}`
+                    let dataCity = await axios.get(city)
+                    let resCity = dataCity.data.results
+                  
+                    // console.log(resCity)
+                    $('#listCity').empty()
+                    $('#listCity').append(`
+                          <option>-</option>
+                        `)
+                    resCity.map(z=>{
+                     
+                        $('#listCity').append(`
+                          <option value="${z.city_id}">${z.city_name}</option>
+                        `)
+                     
+
+                      })
+                });
+            })
+
+           $('#listCity').change((e)=>{
+            $( "#listCity option:selected" ).each(async function() {
+                  const idCity = ($(this).val())
+                  // console.log(idCity)
+
+                    let courier = 'http://localhost:3000/api/cost'
+                    
+                      // alert('asas')
+                      let dataCourier = await axios.post(courier,{
+                        destination : idCity
+                      })
+                      let resCourier = dataCourier.data
+                      // console.log(resCourier)
+                      // $('#listCourier').empty()
+
+                      resCourier.map(x=>{
+                        // $('#listCourier').append(`
+                        //     <option>${x.code}</option>`)
+                          $('#listHarga').empty()
+                          x.costs.map(y=> {
+                           
+                            $('#listHarga').append(`
+                            <option>${y.service}-${y.cost.map(z=>z.value)}</option>`)
+
+                          })
+                        }
+                            
+                        
+                      )
+                      
+                    // console.log(resCourier)
+                    
+                });
+
                 
+
+                $('#btnOngkir').empty()
+                $('#btnOngkir').append(`<button  id="cek" class="btm btn-info">Cek Ongkir</button>`)
+                const cekongkir = document.getElementById('cek')
+                cekongkir.addEventListener('click',async(e)=>{
+                  alert('Sukses tambah ongkir')
+                  const propinsi = $(' #listProv option:selected').text()
+
+                  console.log(propinsi)
+                  const data = {
+                    
+                    "province" : propinsi
+                  }
+                 localStorage.setItem('ongkir',JSON.stringify(data))
+                 
+                 
+                  
+                })
+           })
+
+
+
+
+
+
             let payButton = document.getElementById('paybutton');
             payButton.addEventListener('click', async() => {
               try {
                 let totPrice = document.getElementById('price').innerHTML
                 let ordid = document.getElementById('inv').innerHTML
-                        
+                     
                     const url = 'http://localhost:3000/api/getToken'
                     const item_details = data.map(item=>{return {
                             price: item.price ,
                             quantity: item.count,
                             name:item.name
                           }})
+                    
+                    
                     const getToken = await axios.post(url,{
                               "transaction_details": 
                               {
@@ -192,8 +279,10 @@
                                 "gross_amount": totPrice
                               },
                               item_details
+
+                              
                     })
-                    console.log(getToken.data.body.token)
+                    // console.log(getToken.data.body.token)
                     snap.show()
                     if(!getToken.data.body.token){
                       snap.hide()
@@ -208,7 +297,7 @@
                           const link = 'http://localhost:3000/api/pay'
                           let totPrice = document.getElementById('price').innerHTML
                           let ordid = document.getElementById('inv').innerHTML
-                        let status = result.transaction_status
+                          let status = result.transaction_status
                   
                           const item_details = data.map(item=>{return {
                             price: item.price ,
