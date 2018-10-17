@@ -87,12 +87,51 @@
             <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
             <script src="https://api.midtrans.com/v2/assets/js/midtrans.min.js" type="text/javascript"></script>
             <script type="text/javascript"src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-ERNs-hM7W58t7ryg"></script> 
+       
+            
             <script async>
         
                 (async()=>{
+
+                  let cart = []
+
+            function Item(data){
+                this.id = data.id
+                this.name = data.name
+                this.price = data.price
+                this.count = data.count
+            }
+
+            
+            function saveCart(){
+                localStorage.setItem('cart',JSON.stringify(cart))
+            }
+
+            function loadCart(){
+                cart = JSON.parse(localStorage.getItem('cart'))
+                if(cart === null){
+                    cart = []
+                }
+            }
+
+            loadCart()
+
+            function addItemToCart(data){
+                for(let i in cart){
+                    if(cart[i].id === 99){
+                        cart[i] = data
+                        saveCart()
+                        return
+                    }
+                }
+                console.log('addItemToCart:',data)
+                let item = new Item(data)
+                cart.push(item)
+                saveCart()
+            }
+                  
                   let data = JSON.parse(localStorage.getItem('cart'));
-                  let listongkir = JSON.parse(localStorage.getItem('ongkir'))
-                  console.log(listongkir.province)
+                  // console  .log(listongkir.province)
                   
                    console.log(data)
     
@@ -128,7 +167,7 @@
                  
                    let totalPrice = data.map(item=>item.price*item.count).reduce((prev,cur)=>prev + cur) 
                    let date = new Date()
-                   let invnumber = `${date.getFullYear()}/${date.getDate()}/${date.getDay()}/${date.getHours()}/${date.getMinutes()}/${date.getMilliseconds()}`
+                   let invnumber = `${date.getFullYear()}-${date.getDate()}-${date.getDay()}-${date.getMilliseconds()}`
                    
                  
                      
@@ -220,7 +259,7 @@
                           x.costs.map(y=> {
                            
                             $('#listHarga').append(`
-                            <option>${y.service}-${y.cost.map(z=>z.value)}</option>`)
+                            <option>${y.cost.map(z=>z.value)}</option>`)
 
                           })
                         }
@@ -232,57 +271,66 @@
                     
                 });
 
-                
+             
+
+    
 
                 $('#btnOngkir').empty()
                 $('#btnOngkir').append(`<button  id="cek" class="btm btn-info">Cek Ongkir</button>`)
                 const cekongkir = document.getElementById('cek')
+                
                 cekongkir.addEventListener('click',async(e)=>{
                   alert('Sukses tambah ongkir')
                   const propinsi = $(' #listProv option:selected').text()
+                  const hargaOngkir = $(' #listHarga option:selected').text()
 
-                  console.log(propinsi)
-                  const data = {
+
+
+                  const ongkirItem = {
                     
-                    "province" : propinsi
+                        id:99,
+                        name:propinsi,
+                        price: hargaOngkir,
+                        count:1
+                    
+                        
                   }
-                 localStorage.setItem('ongkir',JSON.stringify(data))
-                 
-                 
+                  // console.log(ongkirItem)
+
+                  addItemToCart(ongkirItem)
+                  
                   
                 })
            })
 
-
-
-
-
-
             let payButton = document.getElementById('paybutton');
             payButton.addEventListener('click', async() => {
               try {
-                let totPrice = document.getElementById('price').innerHTML
+                loadCart()
+                const url = 'http://localhost:3000/api/getToken'
                 let ordid = document.getElementById('inv').innerHTML
-                     
-                    const url = 'http://localhost:3000/api/getToken'
-                    const item_details = data.map(item=>{return {
+
+                    const item_details = cart.map(item=>{return {
                             price: item.price ,
                             quantity: item.count,
                             name:item.name
+
                           }})
-                    
-                    
+                   
                     const getToken = await axios.post(url,{
                               "transaction_details": 
                               {
                                 "order_id":ordid,
-                                "gross_amount": totPrice
+                                "gross_amount": cart.map(item=>item.count * item.price).reduce((a,b)=>a+b) 
                               },
                               item_details
 
                               
                     })
-                    // console.log(getToken.data.body.token)
+                    console.log(getToken.data.body.token)
+
+                      
+
                     snap.show()
                     if(!getToken.data.body.token){
                       snap.hide()
@@ -292,18 +340,26 @@
                         
                         onPending: async function(result)
                         {
-                         
-                          console.log('pending');
+                        
+                          console.log(result);
                           const link = 'http://localhost:3000/api/pay'
                           let totPrice = document.getElementById('price').innerHTML
                           let ordid = document.getElementById('inv').innerHTML
                           let status = result.transaction_status
+                   
+                         
+                       
+                          let prov = cart.name
+                          let ongitem = cart.price
+                          console.log(prov)
                   
-                          const item_details = data.map(item=>{return {
+                          const item_details = cart.map(item=>{return {
+                            id:item.id,
                             price: item.price ,
                             quantity: item.count,
                             name:item.name
                           }})
+                          
                           //  console.log(item_details)
 
 
@@ -314,11 +370,23 @@
                                     "gross_amount": totPrice
                                   },
                                   item_details,
-                                  status
-                                  
+                                  status,
+                                  province:prov,
+                                  ongkir : ongitem
+                              },{
+                                headers : {
+                                  Authorization : localStorage.getItem('token')
+                                }
                               })
+                              .then((result) => {
+                                console.log(result)  
+                              }).catch((err) => {
+                                console.log(err)
+                              });
+                              // console.log(payment)
                               localStorage.removeItem('cart')
-                              window.location.href = 'index.html'
+                              localStorage.removeItem('ongkir')
+                              // window.location.href = 'index.html'
                         }
                        
                         
@@ -326,12 +394,12 @@
                       
                     }
 
-              } catch (error) {
-                console.log(error)
-              }
-              
-             
-            });
+                  } catch (error) {
+                    console.log(error)
+                  }
+                  
+                
+                });
 
                     
                   
