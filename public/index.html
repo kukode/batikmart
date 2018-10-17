@@ -78,6 +78,7 @@
             loadCart()
 
             function addItemToCart(data){
+                loadCart()
                 for(let i in cart){
                     if(cart[i].id === data.id){
                         cart[i].count += data.count
