@@ -1,0 +1,87 @@
+
+<html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="X-UA-Compatible" content="ie=edge">
+            <title>Document</title>
+            <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+            <link rel="stylesheet" href="../../assets/css/preload.min.css">
+            <link rel="stylesheet" href="../../assets/css/plugins.min.css">
+            <link rel="stylesheet" href="../../assets/css/style.light-blue-500.min.css" />
+            <link rel="stylesheet" href="../../assets/css/custom.css" />
+            
+        </head>
+        <body>
+            <div class="container">
+                <h1 class="text-center">History Transaksi </h1>
+                <div class="row">
+                    <div class="col-md-4">
+                        <a href="/client/dashboard.html" class="btn btn-raised btn-primary btn-block">Dashboard</a>
+                        <a href="/client/transaksi.html" class="btn btn-raised btn-warning btn-block">Status Transaksi</a>
+                        <a href="/client/history.html" class="btn btn-raised btn-success btn-block">History Produk</a>
+                       
+                        <a id="logout" class="btn btn-raised btn-default btn-block">Logout</a>
+                    </div>
+                    <div class="col-lg-8">
+                    <div class="card mb-1">
+                       
+                            <ul id="panel" class="list-group">
+    
+                            </ul>
+                       
+                    </div>
+                       
+                    </div>
+                </div>
+            </div>
+        
+            <!--js-->  
+            <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+            <script src="../../assets/js/plugins.min.js"></script>
+            <script src="../../assets/js/app.min.js"></script>
+            <script src="../../assets/js/index.js"></script>
+            <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+                  <script async>
+        
+                (async()=>{
+                  
+                const link = 'http://localhost:3000/client/getStatus'
+                const data = await axios.get(link,{
+                    headers : {
+                        Authorization : localStorage.getItem('token')
+                    }
+                })
+                const result = data.data
+    
+                   
+                     
+                     result.map(item => $('#panel ').append(`
+                                
+                 
+                                    <li class="list-group-item">Order Id : ${item.order_id}</li>
+                                    <li class="list-group-item"><button class="btn btn-raised btn-info">Details</button></li>
+                                  
+                      
+    
+                            
+    
+                      `))
+                 
+                 
+                      const logout = document.getElementById('logout')
+                    logout.addEventListener('click',async()=>{
+                        localStorage.removeItem('token')
+                        window.location.href = '/index.html'
+                    })
+                  
+                     
+                })()
+            
+            </script>
+            
+        </body>
+        </html>
+    
+    
