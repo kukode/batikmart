@@ -9,7 +9,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       order_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       gross_amount: {
         type: Sequelize.STRING
@@ -20,6 +20,10 @@ module.exports = {
       province: {
         type: Sequelize.STRING
       },
+      ongkir: {
+        type: Sequelize.STRING
+      },
+      
       userId: {
         type: Sequelize.INTEGER
       },
