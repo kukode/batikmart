@@ -5,10 +5,13 @@ module.exports = (sequelize, DataTypes) => {
     gross_amount: DataTypes.STRING,
     transaction_status: DataTypes.STRING,
     province: DataTypes.STRING,
+    ongkir: DataTypes.STRING,
     userId: DataTypes.INTEGER
   }, {});
   transaction.associate = function(models) {
     // associations can be defined here
+    transaction.belongsTo(models.user)
+    
   };
   return transaction;
 };
