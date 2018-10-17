@@ -20,9 +20,9 @@
         <div class="row">
             <div class="col-md-4">
                 <a href="/client/dashboard.html" class="btn btn-raised btn-primary btn-block">Dashboard</a>
-                <a href="#" class="btn btn-raised btn-warning btn-block">Status Transaksi</a>
-                <a href="#" class="btn btn-raised btn-success btn-block">History Produk</a>
-                <!-- <a href="/dashboard/category/category.html" class="btn btn-raised btn-success btn-block">Category</a> -->
+                <a href="/client/transaksi.html" class="btn btn-raised btn-warning btn-block">Status Transaksi</a>
+                <a href="/client/history.html" class="btn btn-raised btn-success btn-block">History Produk</a>
+               
                 <a id="logout" class="btn btn-raised btn-default btn-block">Logout</a>
             </div>
             <div class="col-lg-3 col-md-6 col-sm-6">
@@ -47,9 +47,8 @@
         if(!checkLogin){
             window.location.href = '../../index.html'
         }
-
-
         
+      
             
         const logout = document.getElementById('logout')
         logout.addEventListener('click',async()=>{
