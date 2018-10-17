@@ -1,13 +1,12 @@
 require('dotenv').config()
 const express = require('express');
 const route = express.Router();
-const {user,product,transaction} = require('../models')
-const jwt = require('jsonwebtoken')
+const {user,transaction} = require('../models')
 const bcrypt = require('bcrypt')
 const passport = require('../config/passport')
 
 route.post('/registerUser',async(req,res)=>{
-    const {firstName,lastName,phoneNumber,address,email,role,status} = req.body
+    const {firstName,lastName,phoneNumber,address,email} = req.body
     const cryptopass = await bcrypt.hash(req.body.password,parseInt(process.env.SALT_ROUND))
 
     const data = await user.create({
@@ -21,6 +20,24 @@ route.post('/registerUser',async(req,res)=>{
         status : 2
     })
     res.json(data)
+})
+
+route.get('/getStatus',passport.authenticate('jwt'),async(req,res)=>{
+    const {id} = req.user
+    const data = await transaction.findAll(
+        {
+            include:user,
+            where:
+            {
+                userId:id
+            }
+        
+        }
+    )
+    res.json(data)    
+})
+route.get('/getHistory',passport.authenticate('jwt'),async(req,res)=>{
+    
 })
 
 
