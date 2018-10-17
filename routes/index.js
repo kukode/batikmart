@@ -19,32 +19,92 @@ const Base64 = require('js-base64').Base64;
 const request = require('request')
 const axios = require('axios')
 
+
+
+/**
+  * endpoint transaction
+  * 
+  */
+
+ route.get('/transaction',async(req,res)=>{
+  try {
+    const data = await transaction.findAll()
+    res.json(data)
+  } catch (error) {
+    res.json(error)
+  }
+})
+
+route.post('/finish',async(req,res)=>{
+  try {
+    const {transaction_status,order_id} = req.body
+    const data = await transaction.update( {transaction_status},{
+     
+      where : {order_id}
+    })
+    // console.log(req.body) 
+    res.json(data)
+  } catch (error) {
+    res.json(error)
+  }
+})
+
+/**
+ * finish endpoint
+ */
+
+
 /* API PAYMENT */
 
 
-route.post('/pay', async (req,res)=>{
+route.post('/pay',passport.authenticate('jwt') ,async (req,res)=>{
  
   try {
    
+    // console.log(req.body, 'ini pay')
     const { transaction_details:{order_id,gross_amount}} = req.body
-    const { item_details,status,province}= req.body
-    console.log(province)
+    const { item_details,status}= req.body
+    const {id} = req.user
+    
+ 
+    // console.log(item_details)
+    const ongkirs = item_details.find(function(element){
+      return element.id === 99
+    })
+    const itemDetails = item_details.filter(function(e) {
+      return e.id !== 99
+    })
+    // console.log('ongkir ' + ongkirs)
+    // console.log('details ' + itemDetails)
+
 
  const trans = await transaction.create({
+   
     order_id : order_id,
     gross_amount : gross_amount,
-    transaction_status : status
+    transaction_status : status,
+    province : ongkirs.name,
+    ongkir : ongkirs.price,
+    userId : id
+   
+
   })
 
-  item_details.map(x=>{
+  // console.log('dari trans ' + trans)
+
+  itemDetails.map(x=>{
     transactionDetails.create({
+
+      transId : trans.id,
       price: x.price,
       quantity:x.quantity,
       name: x.name
+
+    
     })
 
     });
-
+    // console.log(item_details)
     res.json(trans)
 
   } catch (error) {
@@ -59,7 +119,9 @@ route.post('/getToken',async(req,res) => {
   try {
     const { transaction_details:{order_id,gross_amount}} = req.body
     const { item_details}= req.body
+    // const {customer_details:{first_name}} = req.body
 
+    // console.log(req.body)
     const options =  {
       method: 'POST',
       url: 'https://app.sandbox.midtrans.com/snap/v1/transactions',
@@ -71,7 +133,8 @@ route.post('/getToken',async(req,res) => {
       body: {
           transaction_details: {
               order_id : order_id,
-              gross_amount : gross_amount
+              gross_amount : gross_amount,
+              
           },  
           item_details
       },
@@ -197,19 +260,7 @@ route.get('/listcourierindo',async(req,res)=>{
  */
 
 
- /**
-  * endpoint transaction
-  * 
-  */
-
-  route.get('/transaction',async(req,res)=>{
-    try {
-      const data = await transaction.findAll()
-      res.json(data)
-    } catch (error) {
-      res.json(error)
-    }
-  })
+ 
 
 /* API LOGIN */
 
@@ -218,23 +269,33 @@ route.post('/login',async(req,res)=>{
     const {email,role} = req.body
     const data = await user.findOne({
       where : {
-        email : email
+        email : email,
+        $or : {
+          role : role
+        }
       }
     }
   )
+  console.log(data)
     if(data){
-     
+      
         const comparePassword = await bcrypt.compare(req.body.password,data.password)
         if(comparePassword){
           const koin = {
             id: data.id,
             email : data.email,
-            password : data.password
+            password : data.password,
+            role: data.role
           }
-          // console.log(koin)
-          const token = await jwt.sign(koin,'you_jwt_secret')
-          res.json({token})
-        }
+          console.log(koin)
+          
+            const token = await jwt.sign(koin,'you_jwt_secret')
+            res.json({token})
+
+        
+      }
+     
+        
         else{
           res.json({status : 'error pas'})
         }
