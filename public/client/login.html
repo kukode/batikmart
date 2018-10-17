@@ -89,7 +89,8 @@
                             const passwd = document.getElementById('pass').value
                             const data = await axios.post(link,{
                                 "email" : mail,
-                                "password" : passwd
+                                "password" : passwd,
+                                "role" : 2
                             })
                             console.log(data.data)
                             if(data.data.token){
