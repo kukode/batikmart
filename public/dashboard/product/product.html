@@ -212,7 +212,10 @@
             const save = document.getElementById('send')
             save.addEventListener('click',async()=>{
                 try {
-                    const addItem= 'http://localhost:3000/api/addItem'
+                    // const addItem= 'http://localhost:3000/api/addItem'
+                    const addItem= 'https://batikmart.herokuapp.com/api/addItem'    
+
+
                     // const myForm = document.getElementById('myForm')
                     const bname = document.getElementById('inputNama').value
                     const bsize = document.getElementById('inputSize').value
