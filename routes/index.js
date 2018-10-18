@@ -280,6 +280,7 @@ route.post('/login',async(req,res)=>{
     if(data){
       
         const comparePassword = await bcrypt.compare(req.body.password,data.password)
+        console.log(comparePassword)
         if(comparePassword){
           const koin = {
             id: data.id,
