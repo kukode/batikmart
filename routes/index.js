@@ -436,9 +436,10 @@ route.delete('/removeUsers/:id',async(req,res)=>{
 
 route.put('/updateUsers/:id',async(req,res)=>{
   const id = req.params.id
-  const {firstName,lastName,phoneNumber,address,email,password,role} = req.body
+  const {firstName,lastName,phoneNumber,address,email,role} = req.body
+  const cryptoPass = await bcrypt.hash(req.body.password,parseInt(process.env.SALT_ROUND))
   const data = await user.update(
-    {firstName,lastName,phoneNumber,address,email,password,role},
+    {firstName,lastName,phoneNumber,address,email,password : cryptoPass,role},
     {where : {id:id}}
   )
   res.json(data)

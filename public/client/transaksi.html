@@ -55,8 +55,8 @@
     
             (async()=>{
               
-            // const link = 'http://localhost:3000/client/getStatus'
-            const link = 'https://batikmart.herokuapp.com/client/getStatus'
+            const link = 'http://localhost:3000/client/getStatus'
+            // const link = 'https://batikmart.herokuapp.com/client/getStatus'
             const data = await axios.get(link,{
                 headers : {
                     Authorization : localStorage.getItem('token')

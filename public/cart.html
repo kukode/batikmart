@@ -219,8 +219,8 @@
                   const idProvince = ($(this).val())
                   // console.log(idProvince)
 
-                    // let city = `http://localhost:3000/api/getCity?province=${idProvince}`
-                    let city = `https://batikmart.herokuapp.com/api/getCity?province=${idProvince}`
+                    let city = `http://localhost:3000/api/getCity?province=${idProvince}`
+                    // let city = `https://batikmart.herokuapp.com/api/getCity?province=${idProvince}`
 
                     let dataCity = await axios.get(city)
                     let resCity = dataCity.data.results
@@ -246,8 +246,8 @@
                   const idCity = ($(this).val())
                   // console.log(idCity)
 
-                    // let courier = 'http://localhost:3000/api/cost'
-                    let courier = 'https://batikmart.herokuapp.com/api/cost'
+                    let courier = 'http://localhost:3000/api/cost'
+                    // let courier = 'https://batikmart.herokuapp.com/api/cost'
                     
                       // alert('asas')
                       let dataCourier = await axios.post(courier,{
@@ -312,8 +312,8 @@
             payButton.addEventListener('click', async() => {
               try {
                 loadCart()
-                // const url = 'http://localhost:3000/api/getToken'
-                const url = 'https://batikmart.herokuapp.com/api/getToken'
+                const url = 'http://localhost:3000/api/getToken'
+                // const url = 'https://batikmart.herokuapp.com/api/getToken'
                 let ordid = document.getElementById('inv').innerHTML
 
                     const item_details = cart.map(item=>{return {
@@ -348,8 +348,8 @@
                         {
                         
                           console.log(result);
-                          // const link = 'http://localhost:3000/api/pay'
-                          const link = 'https://batikmart.herokuapp.com/api/pay'
+                          const link = 'http://localhost:3000/api/pay'
+                          // const link = 'https://batikmart.herokuapp.com/api/pay'
                           let totPrice = document.getElementById('price').innerHTML
                           let ordid = document.getElementById('inv').innerHTML
                           let status = result.transaction_status
@@ -393,7 +393,7 @@
                               // console.log(payment)
                               localStorage.removeItem('cart')
                               localStorage.removeItem('ongkir')
-                              // window.location.href = 'index.html'
+                              window.location.href = 'index.html'
                         }
                        
                         
