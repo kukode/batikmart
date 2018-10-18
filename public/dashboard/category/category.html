@@ -93,7 +93,8 @@
             const save = document.getElementById('send')
             save.addEventListener('click',async()=>{
                 try {
-                    const addCategory = 'http://localhost:3000/api/addCategory'
+                    // const addCategory = 'http://localhost:3000/api/addCategory'
+                    const addCategory = 'https://batikmart.herokuapp.com/api/addCategory'
                     const inputCategory = document.getElementById('nameCat').value
                     const data = axios.post(addCategory,{
                         nameCategory : inputCategory

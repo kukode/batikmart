@@ -180,9 +180,15 @@
             if(!checkLogin){
                 window.location.href = '../secret.html'
             }
+            
+            // const link = "http://localhost:3000/api/item"
+            // const linkDel = 'http://localhost:3000/api/removeItem/'
 
-            const link = "http://localhost:3000/api/item"
-            const linkDel = 'http://localhost:3000/api/removeItem/'
+
+            const link = "https://batikmart.herokuapp.com/api/item"
+            const linkDel = 'https://batikmart.herokuapp.com/api/removeItem/'
+
+
             const data = await axios.get(link)
             data.data.map(x => {
                if(!x.categoryName){

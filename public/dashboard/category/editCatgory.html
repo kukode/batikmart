@@ -51,8 +51,12 @@
         const b = a.split('id')
         const c = b['1'].replace('=','')
 
-        const linkc = "http://localhost:3000/api/category/"
-        const linkUpdate = 'http://localhost:3000/api/updateCategory/'
+        // const linkc = "http://localhost:3000/api/category/"
+        const linkc = "https://batikmart.herokuapp.com/api/category/"
+
+
+        // const linkUpdate = 'http://localhost:3000/api/updateCategory/'
+        const linkUpdate = 'https://batikmart.herokuapp.com/api/updateCategory/'
        console.log(linkUpdate + c)
         try {
             const result = await axios.get(linkc+c,{

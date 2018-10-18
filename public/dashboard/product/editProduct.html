@@ -144,9 +144,12 @@
         const a = window.location.href
         const b = a.split('id')
         const c = b['1'].replace('=','')
+        
+        // const linkc = "http://localhost:3000/api/item/"
+        // const linkUpdate = 'http://localhost:3000/api/updateItem/'
 
-        const linkc = "http://localhost:3000/api/item/"
-        const linkUpdate = 'http://localhost:3000/api/updateItem/'
+        const linkc = "https://batikmart.herokuapp.com/api/item/"
+        const linkUpdate = 'https://batikmart.herokuapp.com/api/updateItem/'
        
         try {
             const result = await axios.get(linkc+c,{

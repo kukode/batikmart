@@ -64,8 +64,9 @@
             if(!checkLogin){
                 window.location.href = '../secret.html'
             }
-
-            const link = "http://localhost:3000/api/transaction"
+            
+            // const link = "http://localhost:3000/api/transaction"
+            const link = "https://batikmart.herokuapp.com/api/transaction"
             
             const data = await axios.get(link)
             data.data.map(x => {
