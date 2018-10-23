@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+     "compile" :  "chmod 755 public/uploads"
   },
   "dependencies": {
     "axios": "^0.18.0",
