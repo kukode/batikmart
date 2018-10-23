@@ -195,7 +195,7 @@
                    x.categoryName = 'belum pilih kategori'
                }
 
-               $('#productlist').append(`<tr><td><img src="/${x.flPhoto}" class="img-responsive"/></td><td id="nama">${x.name}</td><td>${x.size}</td><td id="warna">${x.stok}</td><td><a class="btn btn-sm btn-raised btn-danger" id="del-${x.id}">Delete</a><a href="editProduct.html?id=${x.id}" class="btn btn-sm btn-raised btn-warning">Edit</a></td></tr>`)
+               $('#productlist').append(`<tr><td><img src="./uploads/${x.flPhoto}" class="img-responsive"/></td><td id="nama">${x.name}</td><td>${x.size}</td><td id="warna">${x.stok}</td><td><a class="btn btn-sm btn-raised btn-danger" id="del-${x.id}">Delete</a><a href="editProduct.html?id=${x.id}" class="btn btn-sm btn-raised btn-warning">Edit</a></td></tr>`)
                
                const btnDelete = document.getElementById(`del-${x.id}`)
                btnDelete.addEventListener('click',async(req,res)=>{
